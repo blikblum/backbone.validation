@@ -3,9 +3,9 @@ var config = exports;
 config['Browser'] = {
   environment: 'browser',
   sources: [
-    'lib/jquery-1.6.2.js',
-    'lib/underscore.js',
-    'lib/backbone-1.0.0.js',
+    'lib/jquery-1.11.2.js',
+    'lib/underscore-1.7.js',
+    'lib/backbone-1.1.2.js',
     'dist/backbone-validation.js'
   ],
   tests: [
