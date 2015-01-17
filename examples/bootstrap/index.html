@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+  <meta charset="UTF-8">
+  <title>Backbone.Validation Examples</title>
+  <link rel="stylesheet" href="css/bootstrap.css">
+</head>
+
+<body>
+
+<div class="container">
+  <div class="row clearfix">
+    <div class="col-md-12 column">
+      <h1>Backbone.Validation / Bootstrap Example</h1>
+    </div>
+  </div>
+
+  <div class="row clearfix">
+    <div class="col-md-3 column">
+      <ul class="nav nav-pills nav-stacked" id="form-tabs">
+        <li class="active">
+          <a href="#login-form" data-toggle="pill">Login</a>
+        </li>
+        <li>
+          <a href="#userdetails-form" data-toggle="pill">User Details</a>
+        </li>
+      </ul>
+    </div>
+    <div class="col-md-9 column">
+      <div class="tab-content">
+        <div class="tab-pane active" id="login-form">
+          <form class="form-horizontal">
+            <fieldset>
+
+              <!-- Form Name -->
+              <legend>Login</legend>
+
+              <!-- Text input-->
+              <div class="form-group">
+                <label class="col-md-4 control-label" for="login-name">Name</label>
+                <div class="col-md-4">
+                  <input id="login-name" name="name" placeholder="Name" class="form-control input-md" type="text">
+
+                </div>
+              </div>
+
+              <!-- Password input-->
+              <div class="form-group">
+                <label class="col-md-4 control-label" for="login-password">Password</label>
+                <div class="col-md-4">
+                  <input id="login-password" name="password" placeholder="Password" class="form-control input-md" type="password">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="repeatPassword" class="col-md-4 control-label">Repeat Password</label>
+                <div class="col-md-4">
+                  <input type="password" placeholder="Repeat Password" class="form-control" id="repeatPassword" name="repeatPassword" />
+                  <span class="help-block hidden"></span>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <div class="col-md-4 col-md-offset-4">
+                  <button id="enter" name="enter" class="btn btn-primary">Enter</button>
+                </div>
+              </div>
+
+            </fieldset>
+          </form>
+        </div>
+        <div class="tab-pane" id="userdetails-form">
+          <form class="form-horizontal">
+            <fieldset>
+
+              <!-- Form Name -->
+              <legend>User Details</legend>
+
+              <!-- Text input-->
+              <div class="form-group">
+                <label class="col-md-4 control-label" for="name">Name</label>
+                <div class="col-md-4">
+                  <input id="name" name="name" placeholder="Name" class="form-control input-md" type="text">
+                </div>
+              </div>
+
+              <!-- Password input-->
+              <div class="form-group">
+                <label class="col-md-4 control-label" for="password">Password</label>
+                <div class="col-md-4">
+                  <input id="password" name="password" placeholder="Password" class="form-control input-md" type="password">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="col-md-4 control-label">Gender</label>
+                <div class="col-md-4">
+                  <label class="radio-inline control-label">
+                    <input type="radio" id="genderMale" name="gender" value="male" /> Male
+                  </label>
+                  <label class="radio-inline control-label">
+                    <input type="radio" id="genderFemale" name="gender" value="female" /> Female
+                  </label>
+                  <span class="help-block hidden"></span>
+                </div>
+              </div>
+
+              <!-- Text input-->
+              <div class="form-group">
+                <label class="col-md-4 control-label" for="birthdate">Birth Date</label>
+                <div class="col-md-4">
+                  <input id="birthdate" name="birthdate" placeholder="BirthDate" class="form-control input-md" type="text">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="email" class="col-md-4 control-label">Email</label>
+                <div class="col-md-4">
+                  <input type="email" placeholder="Email" class="form-control" id="email" name="email" />
+                  <span class="help-block hidden"></span>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="street" class="col-md-4 control-label">Street</label>
+                <div class="col-md-4">
+                  <input type="text" placeholder="Street" class="form-control" id="street" name="address.street" />
+                  <span class="help-block hidden"></span>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="zip" class="col-md-4 control-label">ZIP</label>
+                <div class="col-md-4">
+                  <input type="text" placeholder="ZIP" class="form-control" id="zip" name="address.zip" />
+                  <span class="help-block hidden"></span>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <div class="col-md-4 col-md-offset-4">
+                  <button id="save" name="save" class="btn btn-primary">Save</button>
+                </div>
+              </div>
+            </fieldset>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="application/javascript" src="../../lib/jquery-1.11.2.js"></script>
+<script type="application/javascript" src="../../lib/underscore-1.7.js"></script>
+<script type="application/javascript" src="../../lib/backbone-1.1.2.js"></script>
+<script type="application/javascript" src="../../src/backbone-validation.js"></script>
+<script type="application/javascript" src="js/bootstrap.js"></script>
+<script type="application/javascript" src="app.js"></script>
+</body>
+</html>
