@@ -22,7 +22,7 @@ var LoginView = Backbone.View.extend(
     },
     initialize: function () {
       Backbone.Validation.bind(this, {
-        attributes: ['name', 'password']
+        attributes: 'form'
       });
     },
     enterClick: function (e) {
@@ -58,7 +58,9 @@ var UserDetailsView = Backbone.View.extend(
     },
     initialize: function () {
       Backbone.Validation.bind(this, {
-        attributes: ['name', 'password']
+        attributes: function () {
+          return ['name', 'password', 'birthdate']
+        }
       });
     },
     saveClick: function (e) {
@@ -74,7 +76,7 @@ var UserDetailsView = Backbone.View.extend(
       address.zip = this.$('[name="address.zip"]').val();
       this.model.set('address', address);
 
-      isValid = !!(this.model.isValid(true));
+      isValid = !!(this.model.isValid());
       if (isValid) {
         this.$('.alert')
           .removeClass('hidden alert-danger')
@@ -94,14 +96,15 @@ var UserDetailsView = Backbone.View.extend(
 );
 
 
+var loginUser = new User({});
 var user = new User({});
-var login = new LoginView(
+var loginView = new LoginView(
   {
-    model: user
+    model: loginUser
   }
 );
 
-var userDetails = new UserDetailsView(
+var userDetailsView = new UserDetailsView(
   {
     model: user
   }
