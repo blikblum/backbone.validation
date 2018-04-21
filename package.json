@@ -24,7 +24,8 @@
     "url": "http://github.com/thedersen/backbone.validation.git"
   },
   "scripts": {
-    "test": "mocha --ui exports --recursive",
+    "test": "grunt rig && mocha --ui exports --recursive",
+    "build": "grunt",
     "prepublish": "grunt"
   },
   "main": "./dist/backbone-validation-amd.js",
