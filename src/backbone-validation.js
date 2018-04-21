@@ -243,11 +243,11 @@ Backbone.Validation = (function(_){
               _.each(attrs, _.bind(function (attr) {
                 error = validateAttr(this, attr, flattened[attr], _.extend({}, this.attributes));
                 if (error) {
-                  options.invalid(view, attr, error, options.selector);
+                  options.invalid(view, attr, error, options.selector, this);
                   invalidAttrs = invalidAttrs || {};
                   invalidAttrs[attr] = error;
                 } else {
-                  options.valid(view, attr, options.selector);
+                  options.valid(view, attr, options.selector, this);
                 }
               }, this));
             }, this));
@@ -287,10 +287,10 @@ Backbone.Validation = (function(_){
                   changed = changedAttrs.hasOwnProperty(attr);
 
                 if(!invalid){
-                  opt.valid(view, attr, opt.selector);
+                  opt.valid(view, attr, opt.selector, model);
                 }
                 if(invalid && (changed || validateAll)){
-                  opt.invalid(view, attr, result.invalidAttrs[attr], opt.selector);
+                  opt.invalid(view, attr, result.invalidAttrs[attr], opt.selector, model);
                 }
             });
           });
