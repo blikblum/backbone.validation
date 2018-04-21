@@ -19,6 +19,8 @@ module.exports = {
             this.valid('name+@example.co');
             this.valid('n@e.co');
             this.valid('first.last@backbone.example.com');
+            this.valid('(unsual)[very]@strange.example.com');
+            this.valid('x@example.com');
 
             this.invalid('name');
             this.invalid('name@');
@@ -27,6 +29,9 @@ module.exports = {
             this.invalid('name,@example.c');
             this.invalid('name;@example.c');
             this.invalid('name@example.com.');
+            this.invalid('Abc.example.com');
+            this.invalid('a"b(c)d,e:f;g<h>i[j\k]l@example.com');
+            this.invalid('just"not"right@example.com');
         },
 
         "email pattern is case insensitive": function () {
