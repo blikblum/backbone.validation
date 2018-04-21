@@ -36,6 +36,73 @@ module.exports = {
         }
     },
 
+    'Defining a custom validator as a string': {
+        beforeEach: function() {
+            var Model = Backbone.Model.extend({
+                validation: {
+                    age: 'validateAge'
+                },
+
+                validateAge(value, attr, computedState) {
+                    if (value != 1) return 'Age invalid'
+                }
+            });
+            this.model = new Model();
+            _.extend(this.model, Backbone.Validation.mixin);
+            this.validateAgeSpy = sinon.spy(this.model, 'validateAge');
+        },
+
+        'should execute corresponding method in model': function() {
+            assert(this.model.set({
+                age: 1
+            }, { validate: true }));
+            sinon.assert.calledOnce(this.validateAgeSpy);
+            assert(this.model.set({
+                age: '1'
+            }, { validate: true }));
+            sinon.assert.calledTwice(this.validateAgeSpy);
+            refute(this.model.set({
+                age: 2
+            }, { validate: true }));
+            sinon.assert.calledThrice(this.validateAgeSpy);
+        }
+    },
+
+    'Defining a custom validator as a string array': {
+        beforeEach: function() {
+            var Model = Backbone.Model.extend({
+                validation: {
+                    age: ['validateAge', 'validateNumber']
+                },
+
+                validateAge(value, attr, computedState) {
+                    if (value != 1) return 'Age invalid'
+                },
+
+                validateNumber(value, attr, computedState) {
+                    if (typeof value !== 'number') return 'Not a number'
+                }
+            });
+            this.model = new Model();
+            _.extend(this.model, Backbone.Validation.mixin);
+            this.validateAgeSpy = sinon.spy(this.model, 'validateAge');
+            this.validateNumberSpy = sinon.spy(this.model, 'validateNumber');
+        },
+
+        'should use corresponding methods in model': function() {
+            assert(this.model.set({
+                age: 1
+            }, { validate: true }));
+            sinon.assert.calledOnce(this.validateAgeSpy);
+            sinon.assert.calledOnce(this.validateNumberSpy);
+            refute(this.model.set({
+                age: '1'
+            }, { validate: true }));
+            sinon.assert.calledTwice(this.validateAgeSpy);
+            sinon.assert.calledTwice(this.validateNumberSpy);
+        }
+    },
+
     'Overriding built-in validator in Backbone.Validation': {
         beforeEach: function () {
             this.builtinMin = Backbone.Validation.validators.min;
