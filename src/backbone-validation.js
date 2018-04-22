@@ -177,14 +177,13 @@ Backbone.Validation = (function(_){
     // Loops through the model's attributes and validates the specified attrs.
     // Returns and object containing names of invalid attributes
     // as well as error messages.
-    var validateModel = function(model, attrs, validatedAttrs) {
+    var validateModel = function(model, allAttrs, validatedAttrs) {
       var error,
           invalidAttrs = {},
-          isValid = true,
-          computed = _.clone(attrs);
+          isValid = true;
 
       _.each(validatedAttrs, function(val, attr) {
-        error = validateAttr(model, attr, val, computed);
+        error = validateAttr(model, attr, val, allAttrs);
         if (error) {
           invalidAttrs[attr] = error;
           isValid = false;
