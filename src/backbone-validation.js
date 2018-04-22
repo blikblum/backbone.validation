@@ -215,12 +215,12 @@ Backbone.Validation = (function(_){
             // regular validation
             _.extend(allAttrs, attr);
 
-            _.each(attr, _.bind(function(value, attrKey) {
-              error = validateAttr(this, attrKey, value, allAttrs);
+            _.each(attr, function(value, attrKey) {
+              error = validateAttr(self, attrKey, value, allAttrs);
               if(error){
                 result[attrKey] = error;
               }
-            }, this));
+            });
 
             return _.isEmpty(result) ? undefined : result;
           }
@@ -233,7 +233,7 @@ Backbone.Validation = (function(_){
         // entire model is valid. Passing true will force a validation
         // of the model.
         isValid: function(option) {
-          var flattened, attrs, error, invalidAttrs;
+          var self = this, flattened, attrs, error, invalidAttrs;
 
           option = option || getOptionsAttrs(options, view);
 
@@ -243,23 +243,23 @@ Backbone.Validation = (function(_){
             attrs = option;
           }
           if (attrs) {
-            flattened = flatten(this.attributes);
+            flattened = flatten(self.attributes);
             //Loop through all attributes and mark attributes invalid if appropriate
-            _.each(attrs, _.bind(function (attr) {
-              error = validateAttr(this, attr, flattened[attr], _.extend({}, this.attributes));
+            _.each(attrs, function (attr) {
+              error = validateAttr(self, attr, flattened[attr], _.extend({}, self.attributes));
               if (error) {
                   invalidAttrs = invalidAttrs || {};
                   invalidAttrs[attr] = error;
               }
               //trigger valid/invalid events for each associated view
-              _.each(this.associatedViews, _.bind(function(view) {
+              _.each(self.associatedViews, function(view) {
                 if (error) {
-                  options.invalid(view, attr, error, options.selector, this);
+                  options.invalid(view, attr, error, options.selector, self);
                 } else {
-                  options.valid(view, attr, options.selector, this);
+                  options.valid(view, attr, options.selector, self);
                 }
-              }, this));
-            }, this));
+              });
+            });
           }
 
           if(option === true) {
