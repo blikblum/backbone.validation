@@ -2,7 +2,7 @@ var assert = require('chai').assert;
 
 global._ = require('underscore');
 global.Backbone = require('backbone');
-require('../dist/backbone-validation');
+require('../dist/backbone.validation');
 global.sinon = require('sinon');
 
 global.assert = assert;

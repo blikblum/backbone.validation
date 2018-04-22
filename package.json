@@ -1,12 +1,15 @@
 {
-  "name": "backbone-validation",
+  "name": "backbone.validation",
   "title": "Backbone.Validation",
   "version": "0.11.3",
   "author": {
     "name": "Thomas Pedersen",
     "url": "http://thedersen.com/"
   },
-  "homepage": "http://thedersen.com/projects/backbone-validation",
+  "contributors": [
+    "Luiz Américo Pereira Câmara"
+  ],
+  "homepage": "https://github.com/blikblum/backbone.validation",
   "licenses": [
     {
       "type": "MIT",
@@ -14,21 +17,21 @@
     }
   ],
   "bugs": {
-    "url": "http://github.com/thedersen/backbone.validation/issues"
+    "url": "https://github.com/blikblum/backbone.validation/issues"
   },
   "directories": {
     "lib": "./dist"
   },
   "repository": {
     "type": "git",
-    "url": "http://github.com/thedersen/backbone.validation.git"
+    "url": "https://github.com/blikblum/backbone.validation.git"
   },
   "scripts": {
     "test": "grunt rig && mocha --ui exports --recursive",
     "build": "grunt",
     "prepublish": "grunt"
   },
-  "main": "./dist/backbone-validation.js",
+  "main": "./dist/backbone.validation.js",
   "peerDependencies": {
     "backbone": "^1.3.3",
     "underscore": "^1.8.3"
