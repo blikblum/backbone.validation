@@ -10,12 +10,7 @@
     "Luiz Américo Pereira Câmara"
   ],
   "homepage": "https://github.com/blikblum/backbone.validation",
-  "licenses": [
-    {
-      "type": "MIT",
-      "url": "http://thedersen.mit-license.org/"
-    }
-  ],
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/blikblum/backbone.validation/issues"
   },
