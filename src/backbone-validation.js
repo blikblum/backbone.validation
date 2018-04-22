@@ -139,7 +139,8 @@ Backbone.Validation = (function(_){
           };
         }
 
-        _.each(_.without(_.keys(attrValidation), 'msg'), function(validator) {
+        _.each(_.keys(attrValidation), function(validator) {
+          if (validator === 'msg') return;
           memo.push({
             fn: defaultValidators[validator],
             val: attrValidation[validator],
