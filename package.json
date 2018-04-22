@@ -28,7 +28,7 @@
     "build": "grunt",
     "prepublish": "grunt"
   },
-  "main": "./dist/backbone-validation-amd.js",
+  "main": "./dist/backbone-validation.js",
   "peerDependencies": {
     "backbone": "^1.3.3",
     "underscore": "^1.8.3"

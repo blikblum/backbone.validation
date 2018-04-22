@@ -5,38 +5,22 @@ module.exports = function(grunt) {
       banner: '// <%= pkg.title %> v<%= pkg.version %>\n' + '//\n' + '// Copyright (c) 2011-<%= grunt.template.today("yyyy") %> <%= pkg.author.name %>\n' + '// Distributed under MIT License\n' + '//\n' + '// Documentation and full license available at:\n' + '// <%= pkg.homepage %>\n'
     },
     rig: {
-      browser: {
+      umd: {
         options: {
           banner: '<%=grunt.config.get("meta").banner%>'
         },
         files: {
-          'dist/<%= pkg.name %>.js': ['src/<%= pkg.name %>.js']
-        }
-      },
-      amd: {
-        options: {
-          banner: '<%=grunt.config.get("meta").banner%>'
-        },
-        files: {
-          'dist/<%= pkg.name %>-amd.js': ['src/<%= pkg.name %>-amd.js']
+          'dist/<%= pkg.name %>.js': ['src/umd-wrapper.js']
         }
       }
     },
     uglify: {
-      browser: {
+      umd: {
         options: {
           banner: '<%=grunt.config.get("meta").banner%>'
         },
         files: {
-          'dist/<%= pkg.name %>-min.js': ['dist/<%= pkg.name %>.js']
-        }
-      },
-      amd: {
-        options: {
-          banner: '<%=grunt.config.get("meta").banner%>'
-        },
-        files: {
-          'dist/<%= pkg.name %>-amd-min.js': ['dist/<%= pkg.name %>-amd.js']
+          'dist/<%= pkg.name %>.min.js': ['dist/<%= pkg.name %>.js']
         }
       }
     },
