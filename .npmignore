@@ -2,4 +2,7 @@ test
 docco
 src
 lib
+/.idea/
+/.vscode/
 /yarn.lock
+/gruntfile.js
