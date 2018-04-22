@@ -5,13 +5,15 @@
 //
 // Documentation and full license available at:
 // https://github.com/blikblum/backbone.validation
-(function (factory) {
+(function (global, factory) {
   if (typeof exports === 'object') {
     module.exports = factory(require('backbone'), require('underscore'));
   } else if (typeof define === 'function' && define.amd) {
     define(['backbone', 'underscore'], factory);
+  } else {
+    factory(global.Backbone, global._);
   }
-}(function (Backbone, _) {
+}(this, function (Backbone, _) {
   Backbone.Validation = (function(_){
     'use strict';
   
