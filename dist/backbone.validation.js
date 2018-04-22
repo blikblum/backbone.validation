@@ -1,10 +1,10 @@
-// Backbone.Validation v0.11.3
+// Backbone.Validation v0.12
 //
-// Copyright (c) 2011-2015 Thomas Pedersen
+// Copyright (c) 2011-2018 Thomas Pedersen
 // Distributed under MIT License
 //
 // Documentation and full license available at:
-// http://thedersen.com/projects/backbone-validation
+// https://github.com/blikblum/backbone.validation
 (function (factory) {
   if (typeof exports === 'object') {
     module.exports = factory(require('backbone'), require('underscore'));
@@ -136,13 +136,6 @@
       var getValidators = function(model, attr) {
         var attrValidationSet = model.validation ? _.result(model, 'validation')[attr] || {} : {};
   
-        // If the validator is a function or a string, wrap it in a function validator
-        if (_.isFunction(attrValidationSet) || _.isString(attrValidationSet)) {
-          attrValidationSet = {
-            fn: attrValidationSet
-          };
-        }
-  
         // Stick the validator object into an array
         if(!_.isArray(attrValidationSet)) {
           attrValidationSet = [attrValidationSet];
@@ -152,7 +145,16 @@
         // with a validation method to call, the value to validate against
         // and the specified error message, if any
         return _.reduce(attrValidationSet, function(memo, attrValidation) {
-          _.each(_.without(_.keys(attrValidation), 'msg'), function(validator) {
+  
+          // If the validator is a function or a string, wrap it in a function validator
+          if (_.isFunction(attrValidation) || _.isString(attrValidation)) {
+            attrValidation = {
+              fn: attrValidation
+            };
+          }
+  
+          _.each(_.keys(attrValidation), function(validator) {
+            if (validator === 'msg') return;
             memo.push({
               fn: defaultValidators[validator],
               val: attrValidation[validator],
@@ -190,14 +192,13 @@
       // Loops through the model's attributes and validates the specified attrs.
       // Returns and object containing names of invalid attributes
       // as well as error messages.
-      var validateModel = function(model, attrs, validatedAttrs) {
+      var validateModel = function(model, allAttrs, validatedAttrs) {
         var error,
             invalidAttrs = {},
-            isValid = true,
-            computed = _.clone(attrs);
+            isValid = true;
   
         _.each(validatedAttrs, function(val, attr) {
-          error = validateAttr(model, attr, val, computed);
+          error = validateAttr(model, attr, val, allAttrs);
           if (error) {
             invalidAttrs[attr] = error;
             isValid = false;
@@ -219,20 +220,26 @@
           preValidate: function(attr, value) {
             var self = this,
                 result = {},
-                error;
+                error,
+                allAttrs = _.extend({}, this.attributes);
   
             if(_.isObject(attr)){
-              _.each(attr, function(value, key) {
-                error = self.preValidate(key, value);
+              // if multiple attributes are passed at once we would like for the validation functions to
+              // have access to the fresh values sent for all attributes, in the same way they do in the
+              // regular validation
+              _.extend(allAttrs, attr);
+  
+              _.each(attr, function(value, attrKey) {
+                error = validateAttr(self, attrKey, value, allAttrs);
                 if(error){
-                  result[key] = error;
+                  result[attrKey] = error;
                 }
               });
   
               return _.isEmpty(result) ? undefined : result;
             }
             else {
-              return validateAttr(this, attr, value, _.extend({}, this.attributes));
+              return validateAttr(this, attr, value, allAttrs);
             }
           },
   
@@ -240,7 +247,7 @@
           // entire model is valid. Passing true will force a validation
           // of the model.
           isValid: function(option) {
-            var flattened, attrs, error, invalidAttrs;
+            var self = this, flattened, attrs, error, invalidAttrs;
   
             option = option || getOptionsAttrs(options, view);
   
@@ -250,20 +257,23 @@
               attrs = option;
             }
             if (attrs) {
-              flattened = flatten(this.attributes);
-              //Loop through all associated views
-              _.each(this.associatedViews, function(view) {
-                _.each(attrs, function (attr) {
-                  error = validateAttr(this, attr, flattened[attr], _.extend({}, this.attributes));
-                  if (error) {
-                    options.invalid(view, attr, error, options.selector);
+              flattened = flatten(self.attributes);
+              //Loop through all attributes and mark attributes invalid if appropriate
+              _.each(attrs, function (attr) {
+                error = validateAttr(self, attr, flattened[attr], _.extend({}, self.attributes));
+                if (error) {
                     invalidAttrs = invalidAttrs || {};
                     invalidAttrs[attr] = error;
+                }
+                //trigger valid/invalid events for each associated view
+                _.each(self.associatedViews, function(view) {
+                  if (error) {
+                    options.invalid(view, attr, error, options.selector, self);
                   } else {
-                    options.valid(view, attr, options.selector);
+                    options.valid(view, attr, options.selector, self);
                   }
-                }, this);
-              }, this);
+                });
+              });
             }
   
             if(option === true) {
@@ -300,10 +310,10 @@
                     changed = changedAttrs.hasOwnProperty(attr);
   
                   if(!invalid){
-                    opt.valid(view, attr, opt.selector);
+                    opt.valid(view, attr, opt.selector, model);
                   }
                   if(invalid && (changed || validateAll)){
-                    opt.invalid(view, attr, result.invalidAttrs[attr], opt.selector);
+                    opt.invalid(view, attr, result.invalidAttrs[attr], opt.selector, model);
                   }
               });
             });
@@ -365,7 +375,7 @@
       return {
   
         // Current version of the library
-        version: '0.11.3',
+        version: '0.12',
   
         // Called to configure the default options
         configure: function(options) {
@@ -456,10 +466,10 @@
       digits: /^\d+$/,
   
       // Matches any number (e.g. 100.000)
-      number: /^-?(?:\d+|\d{1,3}(?:,\d{3})+)(?:\.\d+)?$/,
+      number: /^-?(?:\d+|\d{1,3}(?:,\d{3})+)?(?:\.\d*)?$/,
   
       // Matches a valid email address (e.g. mail@example.com)
-      email: /^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))$/i,
+      email: /^((([a-z]|\d|[\[\]()!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[\[\]()!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))$/i,
   
       // Mathes any valid url (e.g. http://www.xample.com)
       url: /^(https?|ftp):\/\/(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?)(:\d*)?)(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)?)?(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(\#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|\/|\?)*)?$/i
@@ -470,7 +480,7 @@
     // --------------
   
     // Error message for the build in validators.
-    // {x} gets swapped out with arguments form the validator.
+    // {x} gets swapped out with arguments from the validator.
     var defaultMessages = Validation.messages = {
       required: '{0} is required',
       acceptance: '{0} must be accepted',

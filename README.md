@@ -1,8 +1,8 @@
 # Backbone.Validation
 
-![Version](https://img.shields.io/npm/v/backbone-validation.svg?style=flat)
-![Downlodas](https://img.shields.io/npm/dm/backbone-validation.svg?style=flat)
-![Dependencies](https://david-dm.org/thedersen/backbone.validation.svg?style=flat)
+![Version](https://img.shields.io/npm/v/backbone.validation.svg?style=flat)
+![Downlodas](https://img.shields.io/npm/dm/backbone.validation.svg?style=flat)
+![Dependencies](https://david-dm.org/blikblum/backbone.validation.svg?style=flat)
 ![license](http://img.shields.io/npm/l/backbone.validation.svg?style=flat)
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/thedersen/backbone.validation?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
@@ -20,25 +20,16 @@ Backbone.Validation is a bit opinionated, meaning that you have to follow some c
 
 ## Download and source code
 
-You can download the raw source from [GitHub](http://github.com/thedersen/backbone.validation), see the [annotated source](http://thedersen.com/projects/backbone-validation/docs) or use the links below for the latest stable version.
+You can download the raw source from [GitHub](http://github.com/blikblum/backbone.validation) or use the links below for the latest stable version.
 
-#### Standard builds
+#### UMD builds
 
-* Development: [backbone-validation.js](https://raw.github.com/thedersen/backbone.validation/master/dist/backbone-validation.js) *22.7kb*
-* Production:  [backbone-validation-min.js](https://raw.github.com/thedersen/backbone.validation/master/dist/backbone-validation-min.js) *2.7kb gzipped*
-
-#### AMD builds
-
-* Development: [backbone-validation-amd.js](https://raw.github.com/thedersen/backbone.validation/master/dist/backbone-validation-amd.js) *24.2kb*
-* Production:  [backbone-validation-amd-min.js](https://raw.github.com/thedersen/backbone.validation/master/dist/backbone-validation-amd-min.js) *2.8kb gzipped*
+* Development: [backbone.validation.js](https://raw.github.com/blikblum/backbone.validation/master/dist/backbone.validation.js) *22.7kb*
+* Production:  [backbone.validation.min.js](https://raw.github.com/blikblum/backbone.validation/master/dist/backbone.validation.min.js) *2.7kb gzipped*
 
 #### Node.js builds
 
-    npm install backbone-validation
-
-#### Bower builds
-
-    bower install backbone-validation
+    npm install backbone.validation
 
 ## Getting started
 
@@ -937,6 +928,20 @@ Basic behaviour:
 * You may use &lt;input .... data-error-style="inline"&gt; in your form to force rendering of a &lt;span class="help-inline"&gt;
 
 ## Release notes
+
+#### v0.12 [commits](https://github.com/blikblum/backbone.validation/compare/v0.11.3...v0.12)
+
+* Rename package to backbone.validation
+* Moved tests from BusterJS to mocha and updated build dependencies 
+* Distributes only umd version with its minified version
+* Performance improvements
+* lodash 4 support #347
+* Allows array of validators without them being wrapped in objects #332
+* Brackets are allowed in email local part #313
+* Pass model to valid/invalid callbacks #312
+* Pre validate multiple attributes #303
+* Allow `isValid` to check specific attributes even when no View is associated with the model #302
+* Fix number validation to handle leading and trailing decimal #230 and #341
 
 #### v0.11.3 [commits](https://github.com/thedersen/backbone.validation/compare/v0.11.2...v0.11.3)
 
