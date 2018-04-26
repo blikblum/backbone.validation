@@ -3,6 +3,7 @@
 const fs = require('fs')
 const rollup = require('rollup')
 const minify = require('rollup-plugin-uglify')
+const replaceVersion = require('./replace-version')
 const pkg = require('../package.json')
 
 const isDev = process.argv.indexOf('--development') !== -1
@@ -36,7 +37,7 @@ const outputOptions = {
 }
 
 // Compile source code into a distributable format with Babel
-promise = promise.then(() => rollup.rollup(rollupOptions)
+promise = promise.then(() => rollup.rollup(Object.assign({}, rollupOptions, {plugins: [isDev ? undefined : replaceVersion({version: pkg.version})]}))
   .then(bundle => bundle.write(Object.assign({}, outputOptions, {file: `dist/backbone.validation.js`}))))
 
 if (!isDev) {
@@ -45,7 +46,8 @@ if (!isDev) {
 
   // Copy package.json and LICENSE.txt
   promise = promise.then(() => {
-    fs.writeFileSync('dist/backbone-validation.esm.js', fs.readFileSync('src/backbone-validation.js', 'utf-8'), 'utf-8')
+    const source = fs.readFileSync('src/backbone-validation.js', 'utf-8')
+    fs.writeFileSync('dist/backbone-validation.esm.js', source.replace(/{{version}}/, pkg.version), 'utf-8')
   })
 }
 

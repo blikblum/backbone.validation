@@ -361,7 +361,7 @@ var Validation = (function(){
   return {
 
     // Current version of the library
-    version: '0.12',
+    version: '{{version}}',
 
     // Called to configure the default options
     configure: function(options) {
