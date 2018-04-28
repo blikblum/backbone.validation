@@ -695,8 +695,10 @@ var defaultValidators = Validation.validators = (function(){
 
 // Set the correct context for all validators
 // when used from within a method validator
+
+var validatorContext = _.extend({}, formatFunctions, defaultValidators);
 _.each(defaultValidators, function(validator, key){
-  defaultValidators[key] = _.bind(defaultValidators[key], _.extend({}, formatFunctions, defaultValidators));
+  defaultValidators[key] = _.bind(validator, validatorContext);
 });
 
 Backbone.Validation = Validation
