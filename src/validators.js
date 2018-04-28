@@ -15,7 +15,7 @@ var formatFunctions = {
   format: function() {
     var args = Array.prototype.slice.call(arguments),
       text = args.shift();
-    return text.replace(/\{(\d+)\}/g, function(match, number) {
+    return text.replace(/{(\d+)}/g, function(match, number) {
       return typeof args[number] !== 'undefined' ? args[number] : match;
     });
   }
