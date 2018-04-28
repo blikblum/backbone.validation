@@ -37,7 +37,7 @@ const outputOptions = {
 }
 
 // Compile source code into a distributable format with Babel
-promise = promise.then(() => rollup.rollup(Object.assign({}, rollupOptions, {plugins: [isDev ? undefined : replaceVersion({version: pkg.version})]}))
+promise = promise.then(() => rollup.rollup(Object.assign({}, rollupOptions, {plugins: [isDev ? {} : replaceVersion({version: pkg.version})]}))
   .then(bundle => bundle.write(Object.assign({}, outputOptions, {file: `dist/backbone.validation.js`}))))
 
 if (!isDev) {
