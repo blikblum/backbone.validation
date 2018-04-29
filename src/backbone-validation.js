@@ -123,7 +123,8 @@ var mixin = function(view, options) {
       var self = this,
           result = {},
           error,
-          allAttrs = _.extend({}, this.attributes);
+          allAttrs = _.extend({}, this.attributes),
+          context = _.extend({}, formatFunctions, defaultValidators);
 
       if(_.isObject(attr)){
         // if multiple attributes are passed at once we would like for the validation functions to
@@ -132,7 +133,7 @@ var mixin = function(view, options) {
         _.extend(allAttrs, attr);
 
         _.each(attr, function(value, attrKey) {
-          error = validateAttr(self, attrKey, value, allAttrs);
+          error = validateAttr(self, attrKey, value, allAttrs, context);
           if(error){
             result[attrKey] = error;
           }
@@ -141,7 +142,7 @@ var mixin = function(view, options) {
         return _.isEmpty(result) ? undefined : result;
       }
       else {
-        return validateAttr(this, attr, value, allAttrs);
+        return validateAttr(this, attr, value, allAttrs, context);
       }
     },
 
@@ -149,7 +150,8 @@ var mixin = function(view, options) {
     // entire model is valid. Passing true will force a validation
     // of the model.
     isValid: function(option) {
-      var self = this, flattened, attrs, error, invalidAttrs;
+      var self = this, flattened, attrs, error, invalidAttrs,
+          context = _.extend({}, formatFunctions, defaultValidators);
 
       option = option || getOptionsAttrs(options, view);
 
@@ -162,7 +164,7 @@ var mixin = function(view, options) {
         flattened = flatten(self.attributes);
         //Loop through all attributes and mark attributes invalid if appropriate
         _.each(attrs, function (attr) {
-          error = validateAttr(self, attr, flattened[attr], _.extend({}, self.attributes));
+          error = validateAttr(self, attr, flattened[attr], _.extend({}, self.attributes), context);
           if (error) {
               invalidAttrs = invalidAttrs || {};
               invalidAttrs[attr] = error;
