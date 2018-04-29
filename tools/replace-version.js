@@ -1,7 +1,7 @@
 module.exports = function ({version}) {
   return {
     transform(source) {
-      return source.replace(/{{version}}/, version)
+      return {code: source.replace(/{{version}}/, version), map: null}
     }
   }
 }

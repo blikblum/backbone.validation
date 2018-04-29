@@ -37,7 +37,8 @@ function getOutputOptions(format, filename = 'backbone.validation.js') {
     globals: {
       'backbone': 'Backbone',
       'underscore': '_'
-    }
+    },
+    sourcemap: !isDev
   }
 }
 
