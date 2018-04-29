@@ -2,7 +2,7 @@ import Backbone from 'backbone';
 import _ from 'underscore';
 import {flatten} from './utils';
 import {defaultOptions} from './options';
-import {defaultMessages, defaultPatterns, defaultValidators, defaultLabelFormatters, formatFunctions} from './validators';
+import {defaultMessages, defaultPatterns, defaultValidators, defaultLabelFormatters} from './validators';
 
 
 
@@ -73,12 +73,12 @@ var getValidators = function(model, attr) {
 // for that attribute. If one or more errors are found,
 // the first error message is returned.
 // If the attribute is valid, an empty string is returned.
-var validateAttr = function(model, attr, value, computed, context) {
+var validateAttr = function(model, attr, value, computed) {
   // Reduces the array of validators to an error message by
   // applying all the validators and returning the first error
   // message, if any.
   return _.reduce(getValidators(model, attr), function(memo, validator){
-    var result = validator.fn.call(context, value, attr, validator.val, model, computed);
+    var result = validator.fn.call(defaultValidators, value, attr, validator.val, model, computed);
 
     if(result === false || memo === false) {
       return false;
@@ -96,11 +96,10 @@ var validateAttr = function(model, attr, value, computed, context) {
 var validateModel = function(model, allAttrs, validatedAttrs) {
   var error,
       invalidAttrs = {},
-      isValid = true,
-      context = _.extend({}, formatFunctions, defaultValidators);
+      isValid = true;
 
   _.each(validatedAttrs, function(val, attr) {
-    error = validateAttr(model, attr, val, allAttrs, context);
+    error = validateAttr(model, attr, val, allAttrs);
     if (error) {
       invalidAttrs[attr] = error;
       isValid = false;
@@ -123,8 +122,7 @@ var mixin = function(view, options) {
       var self = this,
           result = {},
           error,
-          allAttrs = _.extend({}, this.attributes),
-          context = _.extend({}, formatFunctions, defaultValidators);
+          allAttrs = _.extend({}, this.attributes);
 
       if(_.isObject(attr)){
         // if multiple attributes are passed at once we would like for the validation functions to
@@ -133,7 +131,7 @@ var mixin = function(view, options) {
         _.extend(allAttrs, attr);
 
         _.each(attr, function(value, attrKey) {
-          error = validateAttr(self, attrKey, value, allAttrs, context);
+          error = validateAttr(self, attrKey, value, allAttrs);
           if(error){
             result[attrKey] = error;
           }
@@ -142,7 +140,7 @@ var mixin = function(view, options) {
         return _.isEmpty(result) ? undefined : result;
       }
       else {
-        return validateAttr(this, attr, value, allAttrs, context);
+        return validateAttr(this, attr, value, allAttrs);
       }
     },
 
@@ -150,8 +148,7 @@ var mixin = function(view, options) {
     // entire model is valid. Passing true will force a validation
     // of the model.
     isValid: function(option) {
-      var self = this, flattened, attrs, error, invalidAttrs,
-          context = _.extend({}, formatFunctions, defaultValidators);
+      var self = this, flattened, attrs, error, invalidAttrs;
 
       option = option || getOptionsAttrs(options, view);
 
@@ -164,7 +161,7 @@ var mixin = function(view, options) {
         flattened = flatten(self.attributes);
         //Loop through all attributes and mark attributes invalid if appropriate
         _.each(attrs, function (attr) {
-          error = validateAttr(self, attr, flattened[attr], _.extend({}, self.attributes), context);
+          error = validateAttr(self, attr, flattened[attr], _.extend({}, self.attributes));
           if (error) {
               invalidAttrs = invalidAttrs || {};
               invalidAttrs[attr] = error;

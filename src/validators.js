@@ -3,23 +3,22 @@ import {hasValue} from './utils'
 import {defaultOptions} from './options';
 
 // Formatting functions used for formatting error messages
-var formatFunctions = {
-  // Uses the configured label formatter to format the attribute name
-  // to make it more readable for the user
-  formatLabel: function(attrName, model) {
-    return defaultLabelFormatters[defaultOptions.labelFormatter](attrName, model);
-  },
 
-  // Replaces numeric placeholders like {0} in a string with arguments
-  // passed to the function
-  format: function() {
-    var args = Array.prototype.slice.call(arguments),
-      text = args.shift();
-    return text.replace(/{(\d+)}/g, function(match, number) {
-      return typeof args[number] !== 'undefined' ? args[number] : match;
-    });
-  }
-};
+// Uses the configured label formatter to format the attribute name
+// to make it more readable for the user
+function formatLabel(attrName, model) {
+  return defaultLabelFormatters[defaultOptions.labelFormatter](attrName, model);
+}
+
+// Replaces numeric placeholders like {0} in a string with arguments
+// passed to the function
+function format() {
+  var args = Array.prototype.slice.call(arguments),
+    text = args.shift();
+  return text.replace(/{(\d+)}/g, function(match, number) {
+    return typeof args[number] !== 'undefined' ? args[number] : match;
+  });
+}
 
 // Label formatters
 // ----------------
@@ -115,8 +114,6 @@ var defaultMessages = {
 var isNumber = function(value){
   return _.isNumber(value) || (_.isString(value) && value.match(defaultPatterns.number));
 };
-
-
 
 var defaultValidators =  {
   // Function validator
@@ -241,12 +238,9 @@ var defaultValidators =  {
   }
 };
 
-// Set the correct context for all validators
-// when used from within a method validator
+// Set helper functions using Object.defineProperty (non writable, configurable or enumerable)
+Object.defineProperty(defaultValidators, 'format', {value: format})
+Object.defineProperty(defaultValidators, 'formatLabel', {value: formatLabel})
 
-var validatorContext = _.extend({}, formatFunctions, defaultValidators);
-_.each(defaultValidators, function(validator, key){
-  defaultValidators[key] = _.bind(validator, validatorContext);
-});
 
-export {defaultMessages, defaultPatterns, defaultValidators, defaultLabelFormatters, formatFunctions}
+export {defaultMessages, defaultPatterns, defaultValidators, defaultLabelFormatters}
