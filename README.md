@@ -929,6 +929,12 @@ Basic behaviour:
 
 ## Release notes
 
+#### v0.13 [commits](https://github.com/blikblum/backbone.validation/compare/v0.12...v0.13)
+
+* Refactor source files into separated ES modules
+* Add ES module build
+* Do not recreate validator function context at each validation call
+
 #### v0.12 [commits](https://github.com/blikblum/backbone.validation/compare/v0.11.3...v0.12)
 
 * Rename package to backbone.validation
