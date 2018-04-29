@@ -22,7 +22,7 @@ const banner = `// ${pkg.title} v${pkg.version}
 
 function getRollupOptions(plugins = []) {
   return {
-    input: 'src/backbone-validation.js',
+    input: 'src/index.js',
     external: Object.keys(dependencies),
     plugins
   }
