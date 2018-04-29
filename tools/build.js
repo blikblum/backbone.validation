@@ -1,6 +1,5 @@
 'use strict'
 
-const fs = require('fs')
 const rollup = require('rollup')
 const minify = require('rollup-plugin-uglify')
 const replaceVersion = require('./replace-version')
@@ -21,34 +20,39 @@ const banner = `// ${pkg.title} v${pkg.version}
 // ${pkg.homepage}
 `
 
-const rollupOptions = {
-  input: 'src/backbone-validation.js',
-  external: Object.keys(dependencies)
-}
-
-const outputOptions = {
-  format: 'umd',
-  name: 'Backbone.Validation',
-  banner,
-  globals: {
-    'backbone': 'Backbone',
-    'underscore': '_'
+function getRollupOptions(plugins = []) {
+  return {
+    input: 'src/backbone-validation.js',
+    external: Object.keys(dependencies),
+    plugins
   }
 }
 
+function getOutputOptions(format, filename = 'backbone.validation.js') {
+  return {
+    format: format,
+    file: `dist/${filename}`,
+    name: 'Backbone.Validation',
+    banner,
+    globals: {
+      'backbone': 'Backbone',
+      'underscore': '_'
+    }
+  }
+}
+
+const plugins = isDev ? [] : [replaceVersion({version: pkg.version})]
+
 // Compile source code into a distributable format with Babel
-promise = promise.then(() => rollup.rollup(Object.assign({}, rollupOptions, {plugins: [isDev ? {} : replaceVersion({version: pkg.version})]}))
-  .then(bundle => bundle.write(Object.assign({}, outputOptions, {file: `dist/backbone.validation.js`}))))
+promise = promise.then(() => rollup.rollup(getRollupOptions(plugins))
+  .then(bundle => bundle.write(getOutputOptions('umd'))))
 
 if (!isDev) {
-  promise = promise.then(() => rollup.rollup(Object.assign({}, rollupOptions, {plugins: [minify()]}))
-    .then(bundle => bundle.write(Object.assign({}, outputOptions, {file: `dist/backbone.validation.min.js`}))))
+  promise = promise.then(() => rollup.rollup(getRollupOptions([...plugins, minify()]))
+    .then(bundle => bundle.write(getOutputOptions('umd', 'backbone.validation.min.js'))))
 
-  // Copy package.json and LICENSE.txt
-  promise = promise.then(() => {
-    const source = fs.readFileSync('src/backbone-validation.js', 'utf-8')
-    fs.writeFileSync('dist/backbone-validation.esm.js', source.replace(/{{version}}/, pkg.version), 'utf-8')
-  })
+  promise = promise.then(() => rollup.rollup(getRollupOptions(plugins))
+    .then(bundle => bundle.write(getOutputOptions('es', 'backbone.validation.esm.js'))))
 }
 
 
