@@ -73,15 +73,12 @@ var getValidators = function(model, attr) {
 // for that attribute. If one or more errors are found,
 // the first error message is returned.
 // If the attribute is valid, an empty string is returned.
-var validateAttr = function(model, attr, value, computed) {
+var validateAttr = function(model, attr, value, computed, context) {
   // Reduces the array of validators to an error message by
   // applying all the validators and returning the first error
   // message, if any.
   return _.reduce(getValidators(model, attr), function(memo, validator){
-    // Pass the format functions plus the default
-    // validators as the context to the validator
-    var ctx = _.extend({}, formatFunctions, defaultValidators),
-        result = validator.fn.call(ctx, value, attr, validator.val, model, computed);
+    var result = validator.fn.call(context, value, attr, validator.val, model, computed);
 
     if(result === false || memo === false) {
       return false;
@@ -99,10 +96,11 @@ var validateAttr = function(model, attr, value, computed) {
 var validateModel = function(model, allAttrs, validatedAttrs) {
   var error,
       invalidAttrs = {},
-      isValid = true;
+      isValid = true,
+      context = _.extend({}, formatFunctions, defaultValidators);
 
   _.each(validatedAttrs, function(val, attr) {
-    error = validateAttr(model, attr, val, allAttrs);
+    error = validateAttr(model, attr, val, allAttrs, context);
     if (error) {
       invalidAttrs[attr] = error;
       isValid = false;
