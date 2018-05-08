@@ -1,4 +1,4 @@
-// Backbone.Validation v0.13.0 
+// Backbone.Validation v0.14.0 
 //
 // Copyright (c) 2011-2018 Thomas Pedersen
 // Distributed under MIT License
@@ -83,6 +83,7 @@ var trim = String.prototype.trim ?
 
 var defaultOptions = {
   forceUpdate: false,
+  setInvalidAttrs: false,
   selector: 'name',
   labelFormatter: 'sentenceCase',
   valid: Function.prototype,
@@ -542,6 +543,8 @@ var mixin = function(view, options) {
         });
       });
 
+      if (options.setInvalidAttrs) model.invalidAttrs = result.invalidAttrs;
+
       // Trigger validated events.
       // Need to defer this so the model is actually updated before
       // the event is triggered.
@@ -599,7 +602,7 @@ var collectionRemove = function(model) {
 var Validation =  {
 
   // Current version of the library
-  version: '0.13.0',
+  version: '0.14.0',
 
   // Called to configure the default options
   configure: function(options) {
