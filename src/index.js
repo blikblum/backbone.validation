@@ -219,6 +219,8 @@ var mixin = function(view, options) {
         });
       });
 
+      if (options.setInvalidAttrs) model.invalidAttrs = result.invalidAttrs;
+
       // Trigger validated events.
       // Need to defer this so the model is actually updated before
       // the event is triggered.
