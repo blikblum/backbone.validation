@@ -57,4 +57,7 @@ if (!isDev) {
 }
 
 
-promise.catch(err => console.error(err.stack)) // eslint-disable-line no-console
+promise.catch(err => {
+  console.error(err.stack) // eslint-disable-line no-console
+  process.exit(1)
+})

@@ -24,7 +24,7 @@
   "scripts": {
     "test": "node tools/build.js --development && mocha --ui exports --recursive",
     "build": "node tools/build.js",
-    "prepublish": "npm run build"
+    "prepublishOnly": "npm run build"
   },
   "main": "./dist/backbone.validation.js",
   "module": "./dist/backbone.validation.esm.js",
