@@ -929,6 +929,14 @@ Basic behaviour:
 
 ## Release notes
 
+#### v0.14.1 [commits](https://github.com/blikblum/backbone.validation/compare/v0.14...v0.14.1)
+
+* Respect attributes property passed through validate / set methods
+
+#### v0.14 [commits](https://github.com/blikblum/backbone.validation/compare/v0.13...v0.14)
+
+* Implement setInvalidAttrs
+
 #### v0.13 [commits](https://github.com/blikblum/backbone.validation/compare/v0.12...v0.13)
 
 * Refactor source files into separated ES modules
