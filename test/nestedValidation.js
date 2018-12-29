@@ -37,7 +37,7 @@ module.exports = {
         },
 
         "calls the invalid callback": function () {
-          assert.calledWith(this.invalid, this.view, 'address.street', 'error');
+          assert.calledWith(this.invalid, 'address.street', 'error');
         },
 
         "is valid returns false for the specified attribute name": function () {
@@ -67,7 +67,7 @@ module.exports = {
         },
 
         "calls the valid callback": function () {
-          assert.calledWith(this.valid, this.view, 'address.street');
+          assert.calledWith(this.valid, 'address.street');
         },
 
         "is valid returns true for the specified attribute name": function () {
@@ -123,7 +123,7 @@ module.exports = {
         },
 
         "calls the invalid callback": function () {
-          assert.calledWith(this.invalid, this.view, 'foo.bar.baz', 'error');
+          assert.calledWith(this.invalid, 'foo.bar.baz', 'error');
         },
 
         "is valid returns false for the specified attribute name": function () {
@@ -155,7 +155,7 @@ module.exports = {
         },
 
         "calls the valid callback": function () {
-          assert.calledWith(this.valid, this.view, 'foo.bar.baz');
+          assert.calledWith(this.valid, 'foo.bar.baz');
         },
 
         "is valid returns true for the specified attribute name": function () {
@@ -216,8 +216,8 @@ module.exports = {
         },
 
         "calls the invalid callback": function () {
-          assert.calledWith(this.invalid, this.view, 'foo.bar.baz', 'error');
-          assert.calledWith(this.invalid, this.view, 'foo.foo', 'error');
+          assert.calledWith(this.invalid, 'foo.bar.baz', 'error');
+          assert.calledWith(this.invalid, 'foo.foo', 'error');
         },
 
         "is valid returns false for the specified attribute name": function () {
@@ -252,8 +252,8 @@ module.exports = {
         },
 
         "calls the valid callback": function () {
-          assert.calledWith(this.valid, this.view, 'foo.bar.baz');
-          assert.calledWith(this.valid, this.view, 'foo.foo');
+          assert.calledWith(this.valid, 'foo.bar.baz');
+          assert.calledWith(this.valid, 'foo.foo');
         },
 
         "is valid returns true for the specified attribute name": function () {
@@ -325,8 +325,8 @@ module.exports = {
         },
 
         "calls the invalid callback": function () {
-          assert.calledWith(this.invalid, this.view, 'foo.bar', 'bazQuxError1');
-          assert.calledWith(this.invalid, this.view, 'foo.foo', 'bazQuxError2');
+          assert.calledWith(this.invalid, 'foo.bar', 'bazQuxError1');
+          assert.calledWith(this.invalid, 'foo.foo', 'bazQuxError2');
         },
 
         "isValid returns false for the specified attribute name": function () {
@@ -370,8 +370,8 @@ module.exports = {
         },
 
         "calls the valid callback": function () {
-          assert.calledWith(this.valid, this.view, 'foo.bar');
-          assert.calledWith(this.valid, this.view, 'foo.foo');
+          assert.calledWith(this.valid, 'foo.bar');
+          assert.calledWith(this.valid, 'foo.foo');
         },
 
         "isValid returns true for the specified attribute name": function () {

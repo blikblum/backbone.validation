@@ -37,28 +37,6 @@ module.exports = {
             this.view.remove();
         },
 
-        "when unbinding view without model": {
-            beforeEach: function () {
-                Backbone.Validation.bind(this.view);
-            },
-
-            afterEach: function () {
-                this.view.model = this.model;
-            },
-
-            "nothing happens": function () {
-                delete this.view.model;
-                Backbone.Validation.unbind(this.view);
-                assert(true);
-            }
-        },
-
-        "when unbinding view which was not bound": {
-            "nothing happens": function(){
-                Backbone.Validation.unbind(new Backbone.View({model:new Backbone.Model()}));
-                assert(true);
-            }
-        },
 
         "when bound to model with two validated attributes": {
             beforeEach: function () {
@@ -78,14 +56,6 @@ module.exports = {
                         this.model.set({
                             age: 1
                         }, { validate: true });
-                    },
-
-                    "element should not have invalid class": function () {
-                        refute(this.age.hasClass('invalid'));
-                    },
-
-                    "element should not have data property with error message": function () {
-                        refute.defined(this.age.data('error'));
                     },
 
                     "should return the model": function () {
@@ -108,14 +78,6 @@ module.exports = {
                         this.model.set({
                             age: 0
                         }, { validate: true });
-                    },
-
-                    "element should have invalid class": function () {
-                        assert(this.age.hasClass('invalid'));
-                    },
-
-                    "element should have data attribute with error message": function () {
-                        assert.equals(this.age.data('error'), 'Age is invalid');
                     },
 
                     "should return false": function () {
@@ -141,11 +103,6 @@ module.exports = {
                         }, { validate: true });
                     },
 
-                    "elements should not have invalid class": function () {
-                        refute(this.age.hasClass('invalid'));
-                        refute(this.name.hasClass('invalid'));
-                    },
-
                     "model should be valid": function () {
                         assert(this.model.isValid());
                     }
@@ -159,11 +116,6 @@ module.exports = {
                         }, { validate: true });
                     },
 
-
-                    "elements should have invalid class": function () {
-                        assert(this.age.hasClass('invalid'));
-                        assert(this.name.hasClass('invalid'));
-                    },
 
                     "model should be invalid": function () {
                         refute(this.model.isValid());
@@ -182,14 +134,6 @@ module.exports = {
                         refute(this.result);
                     },
 
-                    "element should not have invalid class": function () {
-                        refute(this.age.hasClass('invalid'));
-                    },
-
-                    "element should have invalid class": function () {
-                        assert(this.name.hasClass('invalid'));
-                    },
-
                     "model should be invalid": function () {
                         refute(this.model.isValid());
                     }
@@ -205,14 +149,6 @@ module.exports = {
 
                     "model is not updated": function () {
                         refute(this.result);
-                    },
-
-                    "element should not have invalid class": function () {
-                        refute(this.name.hasClass('invalid'));
-                    },
-
-                    "element should have invalid class": function () {
-                        assert(this.age.hasClass('invalid'));
                     },
 
                     "model should be invalid": function () {
@@ -268,8 +204,8 @@ module.exports = {
                 "all attributes on the model is validated when nothing has been set": function () {
                     this.model.validate();
 
-                    assert.calledWith(this.invalid, this.view, 'age', 'error');
-                    assert.calledWith(this.invalid, this.view, 'name', 'error');
+                    assert.calledWith(this.invalid, 'age', 'error');
+                    assert.calledWith(this.invalid, 'name', 'error');
                 },
 
                 "all attributes on the model is validated when one property has been set without validating": function () {
@@ -277,8 +213,8 @@ module.exports = {
 
                     this.model.validate();
 
-                    assert.calledWith(this.valid, this.view, 'age');
-                    assert.calledWith(this.invalid, this.view, 'name', 'error');
+                    assert.calledWith(this.valid, 'age');
+                    assert.calledWith(this.invalid, 'name', 'error');
                 },
 
                 "all attributes on the model is validated when two properties has been set without validating": function () {
@@ -286,8 +222,8 @@ module.exports = {
 
                     this.model.validate();
 
-                    assert.calledWith(this.valid, this.view, 'age');
-                    assert.calledWith(this.valid, this.view, 'name');
+                    assert.calledWith(this.valid, 'age');
+                    assert.calledWith(this.valid, 'name');
                 },
 
                 "callbacks are not called for unvalidated attributes": function () {
@@ -296,9 +232,9 @@ module.exports = {
 
                     this.model.validate();
 
-                    assert.calledWith(this.valid, this.view, 'age');
-                    assert.calledWith(this.valid, this.view, 'name');
-                    refute.calledWith(this.valid, this.view, 'someProp');
+                    assert.calledWith(this.valid, 'age');
+                    assert.calledWith(this.valid, 'name');
+                    refute.calledWith(this.valid, 'someProp');
                 }
             }
         },
@@ -390,30 +326,6 @@ module.exports = {
                 beforeEach: function () {
                     this.model.set({ one: 1 }, { validate: true });
                     this.model.set({ two: 2 }, { validate: true });
-                },
-
-                "first input is valid": function () {
-                    assert(this.one.hasClass('invalid'));
-                },
-
-                "second input is invalid": function () {
-                    assert(this.two.hasClass('invalid'));
-                }
-            },
-
-            "when setting invalid value on second input and changing first": {
-                beforeEach: function () {
-                    this.model.set({ one: 1 }, { validate: true });
-                    this.model.set({ two: 2 }, { validate: true });
-                    this.model.set({ one: 2 }, { validate: true });
-                },
-
-                "first input is valid": function () {
-                    refute(this.one.hasClass('invalid'));
-                },
-
-                "second input is valid": function () {
-                    refute(this.two.hasClass('invalid'));
                 }
             }
         },

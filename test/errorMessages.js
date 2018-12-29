@@ -28,13 +28,13 @@ module.exports = {
             "and violating first validator returns msg specified for first validator": function () {
                 this.model.set({ email: '' }, { validate: true });
 
-                assert(this.invalid.calledWith(this.view, 'email', 'required'));
+                assert(this.invalid.calledWith('email', 'required'));
             },
 
             "and violating second validator returns msg specified for second validator": function () {
                 this.model.set({ email: 'a' }, { validate: true });
 
-                assert(this.invalid.calledWith(this.view, 'email', 'pattern'));
+                assert(this.invalid.calledWith('email', 'pattern'));
             }
         },
 
@@ -52,13 +52,13 @@ module.exports = {
             "and violating first validator returns msg specified for attribute": function () {
                 this.model.set({ email: '' }, { validate: true });
 
-                assert(this.invalid.calledWith(this.view, 'email', 'error'));
+                assert(this.invalid.calledWith('email', 'error'));
             },
 
             "and violating second validator returns msg specified for attribute": function () {
                 this.model.set({ email: 'a' }, { validate: true });
 
-                assert(this.invalid.calledWith(this.view, 'email', 'error'));
+                assert(this.invalid.calledWith('email', 'error'));
             }
         }
     }
