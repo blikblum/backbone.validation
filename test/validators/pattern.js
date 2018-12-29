@@ -28,7 +28,7 @@ module.exports = {
         },
 
         "has default error message": function (done) {
-            this.model.bind('validated:invalid', function (model, error) {
+            this.model.on('validated:invalid', function (model, error) {
                 assert.equals({ email: 'Email must be a valid email' }, error);
                 done();
             });
@@ -36,7 +36,7 @@ module.exports = {
         },
 
         "has default error message for inline pattern": function (done) {
-            this.model.bind('validated:invalid', function (model, error) {
+            this.model.on('validated:invalid', function (model, error) {
                 assert.equals({ name: 'Name is invalid' }, error);
                 done();
             });

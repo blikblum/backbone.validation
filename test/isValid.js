@@ -47,7 +47,7 @@ module.exports = {
 			},
 
 			"invalid is triggered when model is invalid": function (done) {
-				this.model.bind('invalid', function (model, attrs) {
+				this.model.on('invalid', function (model, attrs) {
 					done();
 				});
 				refute(this.model.isValid(true));
@@ -70,7 +70,7 @@ module.exports = {
 				},
 
 				"invalid is triggered when attribute is invalid": function (done) {
-					this.model.bind('invalid', function (model, attrs) {
+					this.model.on('invalid', function (model, attrs) {
 						done();
 					});
 					refute(this.model.isValid('name'));

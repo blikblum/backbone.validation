@@ -22,7 +22,7 @@ module.exports = {
         },
 
         "has default error message for string": function (done) {
-            this.model.bind('validated:invalid', function (model, error) {
+            this.model.on('validated:invalid', function (model, error) {
                 assert.equals({ name: 'Name must be at most 2 characters' }, error);
                 done();
             });

@@ -41,7 +41,7 @@ module.exports = {
         },
 
         "has default error message": function (done) {
-            this.model.bind('validated:invalid', function (model, error) {
+            this.model.on('validated:invalid', function (model, error) {
                 assert.equals({ name: 'Name is required' }, error);
                 done();
             });
