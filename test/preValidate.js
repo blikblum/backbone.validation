@@ -6,7 +6,7 @@ module.exports = {
       beforeEach: function () {
         this.model = new Backbone.Model();
 
-        Backbone.Validation.bind(new Backbone.View({ model: this.model }));
+        _.extend(this.model, Backbone.Validation.mixin);
       },
 
       "returns nothing": function () {
@@ -30,7 +30,7 @@ module.exports = {
           }
         });
         this.model = new Model();
-        Backbone.Validation.bind(new Backbone.View({ model: this.model }));
+        _.extend(this.model, Backbone.Validation.mixin);
       },
 
       "and pre-validating single attribute": {
@@ -92,7 +92,7 @@ module.exports = {
           Model.CARD_TYPES = CARD_TYPES;
           this.ModelDefinition = Model;
           this.model = new Model();
-          Backbone.Validation.bind(new Backbone.View({model: this.model}));
+          _.extend(this.model, Backbone.Validation.mixin);
         },
 
         "and pre-validating hash of attributes": {

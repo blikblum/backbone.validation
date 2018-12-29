@@ -14,7 +14,7 @@ module.exports = {
 
 		"default behaviour": {
 			beforeEach: function () {
-				Backbone.Validation.bind(this.view);
+				_.extend(this.model, Backbone.Validation.mixin);
 			},
 
 			"invalid values are not set on model": function () {
@@ -36,7 +36,7 @@ module.exports = {
 
 		"forcing update when setting attribute": {
 			beforeEach: function () {
-				Backbone.Validation.bind(this.view);
+				_.extend(this.model, Backbone.Validation.mixin);
 			},
 
 			"invalid values are set on model": function () {
@@ -49,7 +49,7 @@ module.exports = {
 				Backbone.Validation.configure({
 					forceUpdate: true
 				});
-				Backbone.Validation.bind(this.view);
+				_.extend(this.model, Backbone.Validation.mixin);
 			},
 
 			afterEach: function () {

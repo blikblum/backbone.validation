@@ -21,7 +21,7 @@ module.exports = {
                 model: this.model
             });
 
-            Backbone.Validation.bind(this.view);
+            _.extend(this.model, Backbone.Validation.mixin);
         },
 
         "model is updated before the events are raised": function () {

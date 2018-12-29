@@ -4,7 +4,7 @@ module.exports = {
 			beforeEach: function () {
 				this.model = new Backbone.Model();
 
-				Backbone.Validation.bind(new Backbone.View({ model: this.model }));
+				_.extend(this.model, Backbone.Validation.mixin);
 			},
 
 			"returns true": function () {
@@ -22,7 +22,7 @@ module.exports = {
 					}
 				});
 				this.model = new Model();
-				Backbone.Validation.bind(new Backbone.View({ model: this.model }));
+				_.extend(this.model, Backbone.Validation.mixin);
 			},
 
 			"returns undefined when model is never validated": function () {
