@@ -54,7 +54,7 @@ var flatten = function (obj, into, prefix) {
 
 // Determines whether or not a value is empty
 var hasValue = function(value) {
-  return !(_.isNull(value) || _.isUndefined(value) || (_.isString(value) && value.trim() === '') || (_.isArray(value) && _.isEmpty(value)));
+  return !(value == null || (_.isString(value) && value.trim() === '') || (_.isArray(value) && value.length === 0));
 };
 
 export {flatten, hasValue}
