@@ -108,123 +108,121 @@ var validateModel = function(model, allAttrs, validatedAttrs) {
 };
 
 // Contains the methods that are mixed in on the model when binding
-var mixin = function(options) {
-  return {
+var mixin = {
+  // Check whether or not a value, or a hash of values
+  // passes validation without updating the model
+  preValidate: function(attr, value) {
+    var self = this,
+        result = {},
+        error,
+        allAttrs = _.extend({}, this.attributes);
 
-    // Check whether or not a value, or a hash of values
-    // passes validation without updating the model
-    preValidate: function(attr, value) {
-      var self = this,
-          result = {},
-          error,
-          allAttrs = _.extend({}, this.attributes);
+    if(_.isObject(attr)){
+      // if multiple attributes are passed at once we would like for the validation functions to
+      // have access to the fresh values sent for all attributes, in the same way they do in the
+      // regular validation
+      _.extend(allAttrs, attr);
 
-      if(_.isObject(attr)){
-        // if multiple attributes are passed at once we would like for the validation functions to
-        // have access to the fresh values sent for all attributes, in the same way they do in the
-        // regular validation
-        _.extend(allAttrs, attr);
-
-        _.each(attr, function(value, attrKey) {
-          error = validateAttr(self, attrKey, value, allAttrs);
-          if(error){
-            result[attrKey] = error;
-          }
-        });
-
-        return _.isEmpty(result) ? undefined : result;
-      }
-      else {
-        return validateAttr(this, attr, value, allAttrs);
-      }
-    },
-
-    // Check to see if an attribute, an array of attributes or the
-    // entire model is valid. Passing true will force a validation
-    // of the model.
-    isValid: function(option) {
-      var self = this, flattened, attrs, error, invalidAttrs;
-
-      option = option || getOptionsAttrs(options);
-
-      if(_.isString(option)){
-        attrs = [option];
-      } else if(_.isArray(option)) {
-        attrs = option;
-      }
-      if (attrs) {
-        flattened = flatten(self.attributes);
-        //Loop through all attributes and mark attributes invalid if appropriate
-        _.each(attrs, function (attr) {
-          error = validateAttr(self, attr, flattened[attr], _.extend({}, self.attributes));
-          if (error) {
-            invalidAttrs = invalidAttrs || {};
-            invalidAttrs[attr] = error;
-            defaultCallbacks.invalid(attr, error, self);
-          } else {
-            defaultCallbacks.valid(attr, self);
-          }
-        });
-      }
-
-      if(option === true) {
-        invalidAttrs = this.validate();
-      }
-      if (invalidAttrs) {
-        this.trigger('invalid', this, invalidAttrs, {validationError: invalidAttrs});
-      }
-      return attrs ? !invalidAttrs : this.validation ? this._isValid : true;
-    },
-
-    // This is called by Backbone when it needs to perform validation.
-    // You can call it manually without any parameters to validate the
-    // entire model.
-    validate: function(attrs, setOptions){
-      var model = this,
-          validateAll = !attrs,
-          opt = _.extend({}, options, defaultCallbacks, setOptions),
-          validatedAttrs = getValidatedAttrs(model, getOptionsAttrs(opt)),
-          allAttrs = _.extend({}, validatedAttrs, model.attributes, attrs),
-          flattened = flatten(allAttrs),
-          changedAttrs = attrs ? flatten(attrs) : flattened,
-          result = validateModel(model, allAttrs, _.pick(flattened, _.keys(validatedAttrs)));
-
-      model._isValid = result.isValid;
-
-      // After validation is performed, loop through all validated and changed attributes
-      // and call the valid and invalid callbacks so the view is updated.
-      _.each(validatedAttrs, function(val, attr){
-          var invalid = result.invalidAttrs.hasOwnProperty(attr),
-            changed = changedAttrs.hasOwnProperty(attr);
-
-          if(!invalid){
-            opt.valid(attr, model);
-          }
-          if(invalid && (changed || validateAll)){
-            opt.invalid(attr, result.invalidAttrs[attr], model);
-          }
+      _.each(attr, function(value, attrKey) {
+        error = validateAttr(self, attrKey, value, allAttrs);
+        if(error){
+          result[attrKey] = error;
+        }
       });
 
-
-      if (options.setInvalidAttrs) model.invalidAttrs = result.invalidAttrs;
-
-      // Trigger validated events.
-      // Need to defer this so the model is actually updated before
-      // the event is triggered.
-      _.defer(function() {
-        model.trigger('validated', model._isValid, model, result.invalidAttrs);
-        model.trigger('validated:' + (model._isValid ? 'valid' : 'invalid'), model, result.invalidAttrs);
-      });
-
-      // Return any error messages to Backbone, unless the forceUpdate flag is set.
-      // Then we do not return anything and fools Backbone to believe the validation was
-      // a success. That way Backbone will update the model regardless.
-      if (!opt.forceUpdate && _.intersection(_.keys(result.invalidAttrs), _.keys(changedAttrs)).length > 0) {
-        return result.invalidAttrs;
-      }
+      return _.isEmpty(result) ? undefined : result;
     }
-  };
+    else {
+      return validateAttr(this, attr, value, allAttrs);
+    }
+  },
+
+  // Check to see if an attribute, an array of attributes or the
+  // entire model is valid. Passing true will force a validation
+  // of the model.
+  isValid: function(option) {
+    var self = this, flattened, attrs, error, invalidAttrs;
+
+    option = option || getOptionsAttrs(defaultOptions);
+
+    if(_.isString(option)){
+      attrs = [option];
+    } else if(_.isArray(option)) {
+      attrs = option;
+    }
+    if (attrs) {
+      flattened = flatten(self.attributes);
+      //Loop through all attributes and mark attributes invalid if appropriate
+      _.each(attrs, function (attr) {
+        error = validateAttr(self, attr, flattened[attr], _.extend({}, self.attributes));
+        if (error) {
+          invalidAttrs = invalidAttrs || {};
+          invalidAttrs[attr] = error;
+          defaultCallbacks.invalid(attr, error, self);
+        } else {
+          defaultCallbacks.valid(attr, self);
+        }
+      });
+    }
+
+    if(option === true) {
+      invalidAttrs = this.validate();
+    }
+    if (invalidAttrs) {
+      this.trigger('invalid', this, invalidAttrs, {validationError: invalidAttrs});
+    }
+    return attrs ? !invalidAttrs : this.validation ? this._isValid : true;
+  },
+
+  // This is called by Backbone when it needs to perform validation.
+  // You can call it manually without any parameters to validate the
+  // entire model.
+  validate: function(attrs, setOptions){
+    var model = this,
+        validateAll = !attrs,
+        opt = _.extend({}, defaultOptions, defaultCallbacks, setOptions),
+        validatedAttrs = getValidatedAttrs(model, getOptionsAttrs(opt)),
+        allAttrs = _.extend({}, validatedAttrs, model.attributes, attrs),
+        flattened = flatten(allAttrs),
+        changedAttrs = attrs ? flatten(attrs) : flattened,
+        result = validateModel(model, allAttrs, _.pick(flattened, _.keys(validatedAttrs)));
+
+    model._isValid = result.isValid;
+
+    // After validation is performed, loop through all validated and changed attributes
+    // and call the valid and invalid callbacks so the view is updated.
+    _.each(validatedAttrs, function(val, attr){
+        var invalid = result.invalidAttrs.hasOwnProperty(attr),
+          changed = changedAttrs.hasOwnProperty(attr);
+
+        if(!invalid){
+          opt.valid(attr, model);
+        }
+        if(invalid && (changed || validateAll)){
+          opt.invalid(attr, result.invalidAttrs[attr], model);
+        }
+    });
+
+
+    if (defaultOptions.setInvalidAttrs) model.invalidAttrs = result.invalidAttrs;
+
+    // Trigger validated events.
+    // Need to defer this so the model is actually updated before
+    // the event is triggered.
+    _.defer(function() {
+      model.trigger('validated', model._isValid, model, result.invalidAttrs);
+      model.trigger('validated:' + (model._isValid ? 'valid' : 'invalid'), model, result.invalidAttrs);
+    });
+
+    // Return any error messages to Backbone, unless the forceUpdate flag is set.
+    // Then we do not return anything and fools Backbone to believe the validation was
+    // a success. That way Backbone will update the model regardless.
+    if (!opt.forceUpdate && _.intersection(_.keys(result.invalidAttrs), _.keys(changedAttrs)).length > 0) {
+      return result.invalidAttrs;
+    }
+  }
 };
+
 
 
 // Public interface
@@ -240,7 +238,7 @@ var Validation =  {
 
   // Used to extend the Backbone.Model.prototype
   // with validation
-  mixin: mixin(defaultOptions)
+  mixin: mixin
 };
 
 var defaultCallbacks = Validation.callbacks = {
