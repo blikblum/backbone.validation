@@ -12,9 +12,7 @@ function formatLabel(attrName, model) {
 
 // Replaces numeric placeholders like {0} in a string with arguments
 // passed to the function
-function format() {
-  var args = Array.prototype.slice.call(arguments),
-    text = args.shift();
+function format(text, ...args) {  
   return text.replace(/{(\d+)}/g, function(match, number) {
     return typeof args[number] !== 'undefined' ? args[number] : match;
   });
