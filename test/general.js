@@ -1,13 +1,6 @@
 module.exports = {
     "Backbone.Validation": {
         beforeEach: function () {
-            var View = Backbone.View.extend({
-                render: function () {
-                    var html = $('<input type="text" name="name" /><input type="text" name="age" />');
-                    this.$el.append(html);
-                }
-            });
-
             var Model = Backbone.Model.extend({
                 validation: {
                     age: function (val) {
@@ -24,23 +17,12 @@ module.exports = {
             });
 
             this.model = new Model();
-            this.view = new View({
-                model: this.model
-            });
-
-            this.view.render();
-            this.age = $(this.view.$('[name~=age]'));
-            this.name = $(this.view.$('[name~=name]'));
-        },
-
-        afterEach: function () {
-            this.view.remove();
         },
 
 
         "when bound to model with two validated attributes": {
             beforeEach: function () {
-                Backbone.Validation.bind(this.view);
+              _.extend(this.model, Backbone.Validation.mixin);
             },
 
             "attribute without validator should be set sucessfully": function () {
@@ -194,15 +176,11 @@ module.exports = {
                             required: true,
                             msg: 'error'
                         }
-                    };
-                    Backbone.Validation.bind(this.view, {
-                        valid: this.valid,
-                        invalid: this.invalid
-                    });
+                    };                    
                 },
 
                 "all attributes on the model is validated when nothing has been set": function () {
-                    this.model.validate();
+                    this.model.validate(undefined, { valid: this.valid, invalid: this.invalid });
 
                     assert.calledWith(this.invalid, 'age', 'error');
                     assert.calledWith(this.invalid, 'name', 'error');
@@ -211,7 +189,7 @@ module.exports = {
                 "all attributes on the model is validated when one property has been set without validating": function () {
                     this.model.set({ age: 1 });
 
-                    this.model.validate();
+                    this.model.validate(undefined, { valid: this.valid, invalid: this.invalid });
 
                     assert.calledWith(this.valid, 'age');
                     assert.calledWith(this.invalid, 'name', 'error');
@@ -220,7 +198,7 @@ module.exports = {
                 "all attributes on the model is validated when two properties has been set without validating": function () {
                     this.model.set({ age: 1, name: 'name' });
 
-                    this.model.validate();
+                    this.model.validate(undefined, { valid: this.valid, invalid: this.invalid });
 
                     assert.calledWith(this.valid, 'age');
                     assert.calledWith(this.valid, 'name');
@@ -230,7 +208,7 @@ module.exports = {
 
                     this.model.set({ age: 1, name: 'name', someProp: 'some value' });
 
-                    this.model.validate();
+                    this.model.validate(undefined, { valid: this.valid, invalid: this.invalid });
 
                     assert.calledWith(this.valid, 'age');
                     assert.calledWith(this.valid, 'name');
@@ -251,10 +229,9 @@ module.exports = {
                     }
                 });
 
-                this.model = new this.Model();
-                this.view.model = this.model;
+                this.model = new this.Model();                
 
-                Backbone.Validation.bind(this.view);
+                _.extend(this.model, Backbone.Validation.mixin);
             },
 
             "and violating the first validator the model is invalid": function () {
@@ -282,16 +259,8 @@ module.exports = {
             }
         },
 
-        "when bound to model with to dependent attribute validations": {
+        "when bound to model with two dependent attribute validations": {
             beforeEach: function () {
-                var View = Backbone.View.extend({
-                    render: function () {
-                        var html = $('<input type="text" name="one" /><input type="text" name="two" />');
-                        this.$el.append(html);
-
-                        Backbone.Validation.bind(this);
-                    }
-                });
                 var Model = Backbone.Model.extend({
                     validation: {
                         one: function (val, attr, computed) {
@@ -301,31 +270,46 @@ module.exports = {
                         },
                         two: function (val, attr, computed) {
                             if (val > computed.one) {
-                                return 'return';
+                                return 'error';
                             }
                         }
                     }
                 });
-
-
                 this.model = new Model();
-                this.view = new View({
-                    model: this.model
-                });
+                this.valid = sinon.spy();
+                this.invalid = sinon.spy();
 
-                this.view.render();
-                this.one = $(this.view.$('[name~=one]'));
-                this.two = $(this.view.$('[name~=two]'));
-            },
-
-            afterEach: function () {
-                this.view.remove();
+                _.extend(this.model, Backbone.Validation.mixin);
             },
 
             "when setting invalid value on second input": {
                 beforeEach: function () {
-                    this.model.set({ one: 1 }, { validate: true });
-                    this.model.set({ two: 2 }, { validate: true });
+                    this.model.set({ one: 1 }, { validate: true, valid: this.valid, invalid: this.invalid });
+                    this.model.set({ two: 2 }, { validate: true, valid: this.valid, invalid: this.invalid });
+                  },
+
+                  "first input is valid": function () {
+                    assert.calledWith(this.invalid, 'one', 'error');                      
+                  },
+  
+                  "second input is invalid": function () {                      
+                    assert.calledWith(this.invalid, 'two', 'error');
+                  }
+              },
+  
+              "when setting invalid value on second input and changing first": {
+                  beforeEach: function () {
+                      this.model.set({ one: 1 }, { validate: true, valid: this.valid, invalid: this.invalid });
+                      this.model.set({ two: 2 }, { validate: true, valid: this.valid, invalid: this.invalid });
+                      this.model.set({ one: 2 }, { validate: true, valid: this.valid, invalid: this.invalid });
+                  },
+  
+                  "first input is valid": function () {
+                      assert.calledWith(this.valid, 'one');
+                  },
+  
+                  "second input is valid": function () {
+                      assert.calledWith(this.valid, 'two');    
                 }
             }
         },
@@ -341,7 +325,7 @@ module.exports = {
                     };
                 };
 
-                Backbone.Validation.bind(this.view);
+                _.extend(this.model, Backbone.Validation.mixin);
             },
 
             "and conforming to all validators the model is valid": function () {

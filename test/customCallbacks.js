@@ -25,9 +25,7 @@ module.exports = {
 
             this.model = new Model();
 
-            Backbone.Validation.bind(new Backbone.View({
-                model: this.model
-            }));
+            _.extend(this.model, Backbone.Validation.mixin);
         },
 
         afterEach: function () {

@@ -2,12 +2,8 @@ module.exports = {
     "Specifying error messages": {
         beforeEach: function () {
             this.model = new Backbone.Model();
-            this.view = new Backbone.View({ model: this.model });
-
             this.invalid = sinon.spy();
-            Backbone.Validation.bind(this.view, {
-                invalid: this.invalid
-            });
+            _.extend(this.model, Backbone.Validation.mixin);
         },
 
         "per validator": {
@@ -26,13 +22,13 @@ module.exports = {
             },
 
             "and violating first validator returns msg specified for first validator": function () {
-                this.model.set({ email: '' }, { validate: true });
+                this.model.set({ email: '' }, { validate: true, invalid: this.invalid });
 
                 assert(this.invalid.calledWith('email', 'required'));
             },
 
             "and violating second validator returns msg specified for second validator": function () {
-                this.model.set({ email: 'a' }, { validate: true });
+                this.model.set({ email: 'a' }, { validate: true, invalid: this.invalid });
 
                 assert(this.invalid.calledWith('email', 'pattern'));
             }
@@ -50,13 +46,13 @@ module.exports = {
             },
 
             "and violating first validator returns msg specified for attribute": function () {
-                this.model.set({ email: '' }, { validate: true });
+                this.model.set({ email: '' }, { validate: true, invalid: this.invalid });
 
                 assert(this.invalid.calledWith('email', 'error'));
             },
 
             "and violating second validator returns msg specified for attribute": function () {
-                this.model.set({ email: 'a' }, { validate: true });
+                this.model.set({ email: 'a' }, { validate: true, invalid: this.invalid });
 
                 assert(this.invalid.calledWith('email', 'error'));
             }

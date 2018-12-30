@@ -8,8 +8,7 @@ module.exports = {
 					}
 				}
 			});
-			this.model = new Model();
-			this.view = new Backbone.View({ model: this.model });
+			this.model = new Model();			
 		},
 
 		"default behaviour": {
@@ -19,18 +18,6 @@ module.exports = {
 
 			"invalid values are not set on model": function () {
 				refute(this.model.set({ name: '' }, { validate: true }));
-			}
-		},
-
-		"forcing update when binding": {
-			beforeEach: function () {
-				Backbone.Validation.bind(this.view, {
-					forceUpdate: true
-				});
-			},
-
-			"invalid values are set on model": function () {
-				assert(this.model.set({ name: '' }, { validate: true }));
 			}
 		},
 

@@ -17,10 +17,6 @@ module.exports = {
             });
 
             this.model = new Model();
-            this.view = new Backbone.View({
-                model: this.model
-            });
-
             _.extend(this.model, Backbone.Validation.mixin);
         },
 

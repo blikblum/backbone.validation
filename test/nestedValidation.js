@@ -15,12 +15,7 @@ module.exports = {
         });
 
         this.model = new Model();
-        this.view = new Backbone.View({ model: this.model });
-
-        Backbone.Validation.bind(this.view, {
-          invalid: this.invalid,
-          valid: this.valid
-        });
+        _.extend(this.model, Backbone.Validation.mixin);
       },
 
       "invalid": {
@@ -29,7 +24,7 @@ module.exports = {
             address: {
               street: ''
             }
-          }, { validate: true });
+          }, { validate: true, invalid: this.invalid });
         },
 
         "refutes setting invalid values": function () {
@@ -59,7 +54,7 @@ module.exports = {
             address: {
               street: 'name'
             }
-          }, { validate: true });
+          }, { validate: true, valid: this.valid });
         },
 
         "sets the value": function () {
@@ -99,12 +94,7 @@ module.exports = {
         });
 
         this.model = new Model();
-        this.view = new Backbone.View({ model: this.model });
-
-        Backbone.Validation.bind(this.view, {
-          invalid: this.invalid,
-          valid: this.valid
-        });
+        _.extend(this.model, Backbone.Validation.mixin);
       },
 
       "invalid": {
@@ -115,7 +105,7 @@ module.exports = {
                 baz: ''
               }
             }
-          }, { validate: true });
+          }, { validate: true, invalid: this.invalid, valid: this.valid });
         },
 
         "refutes setting invalid values": function () {
@@ -147,7 +137,7 @@ module.exports = {
                 baz: 'val'
               }
             }
-          }, { validate: true });
+          }, { validate: true, invalid: this.invalid, valid: this.valid });
         },
 
         "sets the value": function () {
@@ -191,12 +181,7 @@ module.exports = {
         });
 
         this.model = new Model();
-        this.view = new Backbone.View({ model: this.model });
-
-        Backbone.Validation.bind(this.view, {
-          invalid: this.invalid,
-          valid: this.valid
-        });
+        _.extend(this.model, Backbone.Validation.mixin);
       },
 
       "invalid": {
@@ -208,7 +193,7 @@ module.exports = {
                 baz: ''
               }
             }
-          }, { validate: true });
+          }, { validate: true, invalid: this.invalid, valid: this.valid });
         },
 
         "refutes setting invalid values": function () {
@@ -244,7 +229,7 @@ module.exports = {
                 baz: 'val'
               }
             }
-          }, { validate: true });
+          }, { validate: true, invalid: this.invalid, valid: this.valid });
         },
 
         "sets the value": function () {
@@ -296,12 +281,7 @@ module.exports = {
         });
 
         this.model = new Model();
-        this.view = new Backbone.View({ model: this.model });
-
-        Backbone.Validation.bind(this.view, {
-          invalid: this.invalid,
-          valid: this.valid
-        });
+        _.extend(this.model, Backbone.Validation.mixin);
       },
 
       "invalid": {
@@ -317,7 +297,7 @@ module.exports = {
                 qux: ''
               }
             }
-          }, { validate: true });
+          }, { validate: true, invalid: this.invalid, valid: this.valid });
         },
 
         "refutes setting invalid values": function () {
@@ -362,7 +342,7 @@ module.exports = {
                 qux: 'val'
               }
             }
-          }, { validate: true });
+          }, { validate: true, invalid: this.invalid, valid: this.valid });
         },
 
         "sets the value": function () {
@@ -412,16 +392,11 @@ module.exports = {
           model: this.model,
           collection: new Collection([this.model])
         });
-        this.view = new Backbone.View({ model: this.model });
-
-        Backbone.Validation.bind(this.view, {
-          invalid: this.invalid,
-          valid: this.valid
-        });
+        _.extend(this.model, Backbone.Validation.mixin);
 
         this.result = this.model.set({
           foo: 'bar'
-        }, { validate: true });
+        }, { validate: true, invalid: this.invalid, valid: this.valid });
       },
 
       "are ignored": function () {

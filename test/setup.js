@@ -22,15 +22,6 @@ refute.same = assert.notStrictEqual;
 refute.exception = assert.doesNotThrow;
 refute.calledWith = sinon.assert.neverCalledWith;
 
-// dummy Validation.bind
-Backbone.Validation.bind = function(view, options) {
-  const model = view.model;
-  _.extend(model, Backbone.Validation.mixin)
-  model.validate = function(attrs, setOptions) {
-    return Backbone.Validation.mixin.validate.call(this, attrs, _.extend({}, Backbone.Validation.callbacks, options, setOptions))
-  }
-}
-
 var jsdom;
 
 before(function() {

@@ -13,14 +13,7 @@ module.exports = {"equalTo validator": {
         });
 
         this.model = new Model();
-        this.view = new Backbone.View({
-            model: this.model
-        });
-
-        Backbone.Validation.bind(this.view, {
-            valid: sinon.spy(),
-            invalid: sinon.spy()
-        });
+        _.extend(this.model, Backbone.Validation.mixin);
 
         this.model.set({password: 'password'});
     },
