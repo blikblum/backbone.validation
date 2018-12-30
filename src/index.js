@@ -182,8 +182,8 @@ var mixin = {
     // After validation is performed, loop through all validated and changed attributes
     // and call the valid and invalid callbacks so the view is updated.
     _.each(validatedAttrs, function(val, attr){
-        var invalid = result.invalidAttrs.hasOwnProperty(attr),
-          changed = changedAttrs.hasOwnProperty(attr);
+        var invalid = attr in result.invalidAttrs,
+          changed = attr in changedAttrs;
 
         if(!invalid){
           opt.valid(attr, model);
