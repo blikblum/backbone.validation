@@ -20,14 +20,6 @@ var getValidatedAttrs = function(model, attrs) {
   }, {});
 };
 
-// Returns an array with attributes passed through options
-var getOptionsAttrs = function(options) {
-  var attrs = options.attributes;  
-  if (_.isArray(attrs)) {
-    return attrs;
-  }
-};
-
 
 // Looks on the model for validations for a specified
 // attribute. Returns an array of any validators defined,
@@ -141,9 +133,7 @@ var mixin = {
   // entire model is valid. Passing true will force a validation
   // of the model.
   isValid: function(option) {
-    var self = this, flattened, attrs, error, invalidAttrs;
-
-    option = option || getOptionsAttrs(defaultOptions);
+    var self = this, flattened, attrs, error, invalidAttrs;    
 
     if(_.isString(option)){
       attrs = [option];
@@ -181,7 +171,7 @@ var mixin = {
     var model = this,
         validateAll = !attrs,
         opt = _.extend({}, defaultOptions, defaultCallbacks, setOptions),
-        validatedAttrs = getValidatedAttrs(model, getOptionsAttrs(opt)),
+        validatedAttrs = getValidatedAttrs(model, opt.attributes),
         allAttrs = _.extend({}, validatedAttrs, model.attributes, attrs),
         flattened = flatten(allAttrs),
         changedAttrs = attrs ? flatten(attrs) : flattened,
