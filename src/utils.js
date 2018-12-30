@@ -54,19 +54,7 @@ var flatten = function (obj, into, prefix) {
 
 // Determines whether or not a value is empty
 var hasValue = function(value) {
-  return !(_.isNull(value) || _.isUndefined(value) || (_.isString(value) && trim(value) === '') || (_.isArray(value) && _.isEmpty(value)));
+  return !(_.isNull(value) || _.isUndefined(value) || (_.isString(value) && value.trim() === '') || (_.isArray(value) && _.isEmpty(value)));
 };
-
-// Use native trim when defined
-var trim = String.prototype.trim ?
-  function(text) {
-    return text.trim();
-  } :
-  function(text) {
-    var trimLeft = /^\s+/,
-      trimRight = /\s+$/;
-
-    return text.toString().replace(trimLeft, '').replace(trimRight, '');
-  };
 
 export {flatten, hasValue}
